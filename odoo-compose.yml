@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      - POSTGRES_DB=test2
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=admin
+    restart: always
+    volumes:
+      - odoo18-db-data:/var/lib/postgresql
+
+  odoo:
+    image: odoo:18.0
+    container_name: app
+    depends_on:
+      - db
+    ports:
+      - "9000:8069"
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=admin
+      - POSTGRES_DB=test2
+    restart: always
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
+      - odoo18-web-data:/var/lib/odoo
+volumes:
+  odoo18-web-data:
+  odoo18-db-data:
